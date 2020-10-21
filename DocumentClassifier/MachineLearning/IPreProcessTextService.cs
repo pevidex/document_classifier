@@ -5,6 +5,6 @@ namespace DocumentClassifier.API.MachineLearning
 {
     public interface IPreProcessTextService
     {
-        public List<string> PreProcessDocument(Document document);
+        public ProcessedDocument PreProcessDocument(Document document);
     }
 }

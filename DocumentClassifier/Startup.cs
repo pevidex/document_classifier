@@ -34,11 +34,13 @@ namespace DocumentClassifier
         {
             services.AddControllers();
             services.AddDbContext<AppDbContext>(options => {
-                options.UseInMemoryDatabase("Document-api-in-memory");
+                options.UseSqlServer(Configuration.GetConnectionString("AppDbContext"));
             });
             services.AddScoped<IDocumentRepository, DocumentRepository>();
+            services.AddScoped<IWordRepository, WordRepository>();
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IPreProcessTextService, PreProcessTextService>();
+            services.AddScoped<ILearningService, NaiveBayesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,5 +11,6 @@ namespace DocumentClassifier.API.Domain.Repositories
         Task<Document> FindByIdAsync(int id);
         void Update(Document document);
         void Remove(Document document);
+        void Reset();
     }
 }

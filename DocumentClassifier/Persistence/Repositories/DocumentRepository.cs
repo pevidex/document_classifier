@@ -17,19 +17,26 @@ namespace DocumentClassifier.API.Persistence.Repositories
         public async Task<Document> AddAsync(Document document)
         {
             await _context.Documents.AddAsync(document);
+            await _context.SaveChangesAsync();
             return document;
         }
         public async Task<Document> FindByIdAsync(int id)
         {
             return await _context.Documents.FindAsync(id);
         }       
-        public void Remove(Document document)
+        public async void Remove(Document document)
         {
             _context.Documents.Remove(document);
+            await _context.SaveChangesAsync();
         }
-        public void Update(Document document)
+        public async void Update(Document document)
         {
             _context.Documents.Update(document);
+            await _context.SaveChangesAsync();
         }     
+        public void Reset()
+        {
+            _context.Reset();
+        }
     }
 }

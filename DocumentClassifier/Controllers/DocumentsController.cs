@@ -35,12 +35,12 @@ namespace DocumentClassifier.Controllers
         [HttpPost("training/document")]
         public async Task<ActionResult<Document>> TrainDocument([FromBody] Document document)
         {
-            if (!TryValidateModel(document, nameof(document)))
+            if (!TryValidateModel(document, nameof(document)) || document.Topic==null)
             {
                 return BadRequest();
             }
            await _documentService.TrainDocument(document);
-            return Ok(new {topic = document.Topic});
+            return Ok();
         }
 
         [HttpPost("test/document")]
@@ -50,8 +50,14 @@ namespace DocumentClassifier.Controllers
             {
                 return BadRequest();
             }
-           await _documentService.TestDocument(document);
-            return Ok(new {topic = document.Topic});
+            string _topic = await _documentService.TestDocument(document);
+            return Ok(new {topic = _topic});
+        }
+
+        [HttpPost("reset")]
+        public async void Reset()
+        {
+           _documentService.Reset();
         }
     }
 }
