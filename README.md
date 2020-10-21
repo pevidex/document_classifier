@@ -64,9 +64,9 @@ We'll evaluate your project submission according to:
 3. Scalability of the proposed approach.
 4. (Bonus) If the server is terminated for any reason and then restarted, it should maintain the state (what it has learned from the training data seen so far).
 
-## PreRequisites
+## Pre Requisites
 
-1. .Net Core 3
+- .Net Core 3
 
 ## Run
 
