@@ -70,6 +70,6 @@ We'll evaluate your project submission according to:
 
 ## Run
 
-'''
+```
 dotnet run
-'''
+```
