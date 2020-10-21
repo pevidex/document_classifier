@@ -15,27 +15,45 @@ namespace DocumentClassifier.API.MachineLearning
     {
         public ProcessedDocument PreProcessDocument(Document document){
             Console.WriteLine("## Pre processing the document ##");
-            string preProcessedText = document.Text.ToLower();
-            preProcessedText = ReplaceNonAlphaNumericCharacters(preProcessedText);
-    	    List<string> preProcessedTextAsList = preProcessedText.Split(' ').ToList();
-            preProcessedTextAsList = RemoveSingleLetters(preProcessedTextAsList);
-            preProcessedTextAsList = RemoveStopWords(preProcessedTextAsList);
-            List<Word> words = new List<Word>();
-            foreach(string word in preProcessedTextAsList){
-                words.Add(new Word(word,document.Topic));
-            }
-            ProcessedDocument processedDocument = new ProcessedDocument(document,words);
+
+            string text = document.Text;
+
+            LowerText(text);
+            ReplaceNonAlphaNumericCharacters(text);
+    	    List<string> bagOfWords = SplitInList(text);
+            RemoveSingleLetters(bagOfWords);
+            RemoveStopWords(bagOfWords);
+            ProcessedDocument processedDocument = new ProcessedDocument(document,BuildWordList(bagOfWords, document));
+
             Console.WriteLine("## Finished pre processing the document ##");
             return processedDocument;
         }
 
-        private string ReplaceNonAlphaNumericCharacters(string text){
-            Regex rgx = new Regex("[^a-zA-Z0-9 ]");
-            text = rgx.Replace(text, "");
-            return text;
+        private List<Word> BuildWordList(List<string> bagOfWords, Document document){
+            List<Word> words = new List<Word>();
+            foreach(string word in bagOfWords){
+                words.Add(new Word(word,document.Topic));
+            }
+            return words;
         }
 
-        private List<string> RemoveStopWords(List<string> text){
+        private List<string> SplitInList(string text){
+            return text.Split(' ').ToList();
+        }
+
+        private void LowerText(string text){
+            text.ToLower();
+        }
+
+        /*
+        Todo: in a case where "bla\nbla" becomes "blabla" after this method FIX
+        */
+        private void ReplaceNonAlphaNumericCharacters(string text){
+            Regex rgx = new Regex("[^a-zA-Z0-9 ]");
+            text = rgx.Replace(text, "");
+        }
+
+        private void RemoveStopWords(List<string> text){
             for(int i=text.Count - 1; i > -1; i--)
             {
                 foreach(string word in UtilsService._stopWords){
@@ -46,10 +64,9 @@ namespace DocumentClassifier.API.MachineLearning
                         }
                 }
             }
-            return text;
         }
 
-        private List<string> RemoveSingleLetters(List<string> text){
+        private void RemoveSingleLetters(List<string> text){
             for(int i=text.Count - 1; i > -1; i--)
             {
                 if(text[i].Length==1)
@@ -57,7 +74,6 @@ namespace DocumentClassifier.API.MachineLearning
                     text.RemoveAt(i);
                 }
             }
-            return text;
         }
     }
 }

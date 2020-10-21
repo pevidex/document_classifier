@@ -34,7 +34,6 @@ namespace DocumentClassifier.API.Services
 
         public async Task<Document> TrainDocument(Document document)
         {
-            //classify then add to bd
             ProcessedDocument processedDocument = _iPreProcessTextService.PreProcessDocument(document);
             _iLearningService.Train(processedDocument);
             return await _documentRepository.AddAsync(document);
@@ -42,12 +41,14 @@ namespace DocumentClassifier.API.Services
 
         public async Task<string> TestDocument(Document document)
         {
-            //test then add to bd
             ProcessedDocument processedDocument = _iPreProcessTextService.PreProcessDocument(document);
             string topic = _iLearningService.Classify(processedDocument);
             return topic;
         }      
 
+        /*
+        To test only - Cleans the bd
+        */
         public void Reset(){
             _documentRepository.Reset();
         }

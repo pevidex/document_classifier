@@ -8,6 +8,10 @@ using DocumentClassifier.API.Domain.Services;
 
 namespace DocumentClassifier.Controllers
 {
+    /*
+    Controller responsible for training and testing documents.
+    Also has an endpoint to reset the db and get a list of all documents.
+    */
     [Route("api/")]
     public class DocumentsController : Controller
     {

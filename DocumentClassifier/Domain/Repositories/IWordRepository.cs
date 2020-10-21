@@ -7,12 +7,10 @@ namespace DocumentClassifier.API.Domain.Repositories
     public interface IWordRepository
     {
         void UpdateOrInsert(Word word);
-        void AddAsync(Word word);
-        void AddMultipleWordsAsync(List<Word> words);
-        void SaveContext();
-        float GetOverallProbabilityByClass(string possibleClass);
-        int GetTotalWordsPerClass(string possibleClass);
+        void AddMultipleWords(List<Word> words);
+        float GetOverallProbabilityByTopic(string topic);
+        int GetTotalWordsPerTopic(string topic);
         int GetTotalCountOfDistinctWords();
-        int getWordCountByClass(Word word, string possibleClass);
+        int getWordCountByTopic(Word word, string topic);
     }
 }

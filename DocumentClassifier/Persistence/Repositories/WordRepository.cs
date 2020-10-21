@@ -12,46 +12,53 @@ namespace DocumentClassifier.API.Persistence.Repositories
     {
         public WordRepository(AppDbContext context) : base(context)
         { }
-        public async void AddAsync(Word word)
-        {
-            await _context.Words.AddAsync(word);
-        }
-        public async void SaveContext(){
-            await _context.SaveChangesAsync();
-        }
-        public async Task<Word> FindByIdAsync(int id)
-        {
-            return await _context.Words.FindAsync(id);
-        }  
+        
 
-        public void AddMultipleWordsAsync(List<Word> words){
+        public void AddMultipleWords(List<Word> words){
             foreach(Word word in words){
                 UpdateOrInsert(word);
             }
         }
 
-        public float GetOverallProbabilityByClass(string possibleClass){
-            var countByClass = _context.Documents.Where(x => x.Topic == possibleClass).Count();
+        /*
+        Returns the overall probability of a certain topic.
+        In other words: P(topic_X) = nr_documents_with_topic_X/nr_total_documents
+        todo: requires refactor -> this logic should not be here
+        */
+        public float GetOverallProbabilityByTopic(string topic){
+            var countWordsByTopic = _context.Documents.Where(x => x.Topic == topic).Count();
             
             var totalDocuments = _context.Documents.Count();
 
-            return (float) countByClass/totalDocuments;
+            return (float) countWordsByTopic/totalDocuments;
         }
 
-        public int GetTotalWordsPerClass(string possibleClass){
-            //todo test
-            var result = _context.Words.Where(w => w.Topic == possibleClass).Sum(a => a.Count);
-            return (int) result;
+        /*
+        Returns the number words in documents with a certain topic
+        */
+        public int GetTotalWordsPerTopic(string topic){
+           return _context.Words.Where(w => w.Topic == topic).Sum(a => a.Count);
         }
 
-        public int getWordCountByClass(Word word, string possibleClass){
-             return _context.Words.Where(a => a.Topic == possibleClass && a.Text == word.Text).Select(w => w.Count).FirstOrDefault();
+        /*
+        Returns the number of times a certain word appears within a topic
+        */
+        public int getWordCountByTopic(Word word, string topic){
+             return _context.Words.Where(a => a.Topic == topic && a.Text == word.Text).Select(w => w.Count).FirstOrDefault();
         }
 
+        /*
+        Returns the total count of distinct words across all documents
+        todo: This value can be kept in cache until new documents are trained
+        */
         public int GetTotalCountOfDistinctWords(){
             return _context.Words.Select(w => w.Text).Distinct().Count();
         }
 
+        /*
+        Searchs for the key (word,topic). If it does not exist inserts with count = 1.
+        Otherwise increments count column of the respective (word,topic) row
+        */
         public void UpdateOrInsert(Word word)
         {
             var word_entry = _context.Words.FirstOrDefault(s => s.Topic == word.Topic && s.Text == word.Text);
@@ -59,7 +66,6 @@ namespace DocumentClassifier.API.Persistence.Repositories
                 _context.Words.Add(word);
             }
             else{
-                Console.WriteLine(word_entry.Id + " " +word_entry.Text + " " + word_entry.Count);
                 word_entry.Count += word.Count;
             }
         }     
