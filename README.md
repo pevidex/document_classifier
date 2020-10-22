@@ -1,4 +1,4 @@
-# Priberam Challenge
+# Document Classifiers
 
 ## Included Files
 
