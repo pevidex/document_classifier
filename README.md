@@ -1,4 +1,4 @@
-# Document Classifiers
+# Document Classifier
 
 ## Included Files
 
